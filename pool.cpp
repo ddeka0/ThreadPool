@@ -222,12 +222,7 @@ class Thpool {
     std::vector<std::thread> threads;
     threadJoiner joiner;
     void workerThread() {
-        while(!done) {
-            auto task = workQ.waitAndPop();
-            if(task != nullptr and !done) {
-                (*task)();
-            }
-        }
+
     }
     public:
         Thpool(): done(false) ,joiner(threads) {
@@ -235,7 +230,17 @@ class Thpool {
 	        printf("ThreadPool Size = %d\n",maxThreadCount);
             try {
                 for(unsigned int i = 0;i<maxThreadCount;i++) {
-                    threads.push_back(std::thread(&Thpool::workerThread,this));
+                    threads.emplace_back(
+                        [this]()
+                        {
+                            while(!done) {
+                                auto task = workQ.waitAndPop();
+                                if(task != nullptr and !done) {
+                                    (*task)();
+                                }
+                            }
+                        }
+                    );
                 }
             }catch(...) {
                 done = true;
