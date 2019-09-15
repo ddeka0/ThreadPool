@@ -183,10 +183,6 @@ class TaskA {
             return func();
         }
 
-        int callback() :  {
-
-        }
-
     private:
         Function func;
         
@@ -291,5 +287,6 @@ int main() {
     cout <<"result of xy = "<< x.get() << endl;
     cout <<"result of xz = "<< y.get() << endl;
 
+    getchar();
     printf("Exit of main function!\n");
 }
