@@ -103,7 +103,9 @@ void threadSafeQueue<T>::waitAndPop(T& value) {
 template<typename T>
 std::shared_ptr<T> threadSafeQueue<T>::waitAndPop() {
     std::unique_lock<std::mutex> lk(mut);
-    dataCond.wait(lk,[this](){return !taskQueue.empty();});
+    dataCond.wait(lk,[this](){
+        return !taskQueue.empty();}
+    );
     std::shared_ptr<T> res = taskQueue.front();
     taskQueue.pop();
     return res;
@@ -230,17 +232,18 @@ class Thpool {
     std::atomic_bool done;
     threadSafeQueue<std::function<void()>> workQ;
     std::vector<std::thread> threads;
-    threadJoiner joiner;
+    // threadJoiner joiner;
     void workerThread() {
         while(!done) {
             auto task = workQ.waitAndPop();
+            std::cout <<"wake up...." << std::endl;
             if(task != nullptr and !done) {
                 (*task)();
             }
         }
     }
     public:
-        Thpool(): done(false) ,joiner(threads) {
+        Thpool(): done(false) /*,joiner(threads)*/ {
 	        unsigned const maxThreadCount = THREAD_POOL_SIZE;
 	        printf("ThreadPool Size = %d\n",maxThreadCount);
             try {
@@ -255,7 +258,8 @@ class Thpool {
         }
         ~Thpool() {
             cout <<"getting called, Thpool destructor" << endl;
-            done = true;
+            // done = true;
+            deAllocatePool();
         }
         
         template<typename TaskType>
@@ -274,13 +278,19 @@ class Thpool {
             done = true;
             workQ.notifyAllThreads();
             unsigned const maxThreadCount = THREAD_POOL_SIZE;
+
+            std::cout <<"what1" << std::endl;
 	    	for(unsigned int i = 0;i<maxThreadCount;) {
                 if(threads[i].joinable()) {
+                    std::cout <<"stuck...." << std::endl;
+                    workQ.notifyAllThreads();
                     threads[i].join();
                     i++;
+                    std::cout << i << std::endl;
                 }else {
                 	workQ.notifyAllThreads();
                 }
+                std::cout <<"what"<<std::endl;
             }
         }
 };
