@@ -43,8 +43,9 @@ int main(int argc,char *argv[]) {
     for(unsigned j = 0;j<=10000;j++) {
         pool.submit(Tasks[dis(gen)]);
     }
+    std::cout <<"All tasks are submitted" << std::endl;
     std::this_thread::sleep_for(std::chrono::seconds(_seconds));
     pool.destruct();
-    std::cout <<"No. of task completed in 10 Seconds = "<< pool._total_work_count << std::endl;
+    std::cout <<"No. of task completed in "<<_seconds<<" Seconds = "<< pool._total_work_count << std::endl;
     
 }

@@ -17,15 +17,16 @@ public:
 	}
 	bool pop(std::function<void()>& x) {
 		lock_t lock{_mutex};
-		while(_q.empty() && !_done) _ready.wait(lock);
+		// while(_q.empty() && !_done) _ready.wait(lock);
 		_ready.wait(lock,[this]() {
 			return !_q.empty() || _done;
 		});
-		x = nullptr;
-		if(!_q.empty()) {
-			x = std::move(_q.front());
-			_q.pop_front();
+		if(_q.empty() || _done ) {
+			x = nullptr;
+			return false;
 		}
+		x = std::move(_q.front());
+		_q.pop_front();
 		return true;
 	}
 	template<typename F>
