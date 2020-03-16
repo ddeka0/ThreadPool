@@ -17,7 +17,10 @@ class task_system {
 		thread_local int work_count = 0;
 		while(true) {
 			std::function<void()> f;
-			if(!_q[i].pop(f)) break;
+			for(unsigned n = 0;n != _count; ++n) {
+				if(_q[(i + n) % _count].try_pop(f)) break;
+			}
+			if(!f && !_q[i].pop(f)) break;
 			f();
 			work_count++;
 		}
@@ -47,6 +50,9 @@ class task_system {
 		template<Invocable F>
 		void submit(F &&f) {
 			auto i = _index++;
+			for(unsigned n = 0; n!= _count*4;++n) {
+				if(_q[(i + n) % _count].try_push(std::forward<F>(f))) return;
+			}
 			_q[i % _count].push(std::forward<F>(f));
 		}
 };

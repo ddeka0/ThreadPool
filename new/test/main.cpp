@@ -18,7 +18,7 @@ int main(int argc,char *argv[]) {
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
          }},
         {1,[]() {
-            for(unsigned int i = 0;i<=100000000;i++) {
+            for(unsigned int i = 0;i<=10000000;i++) {
                 int x = i + i / 2;
                 int y = x + i;
                 int z = x + y;
@@ -30,7 +30,7 @@ int main(int argc,char *argv[]) {
                 int y = x + i;
                 int z = x + y;
             }
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             for(unsigned int i = 0;i<=50000000;i++) {
                 int x = i + i / 2;
                 int y = x + i;
