@@ -1,5 +1,6 @@
 # ThreadPool
 This is ThreadPool implementation using new features of C++
 
-#### Instruction to install gcc for C++20
-      https://github.com/ddeka0/cppLearn/blob/master/cpp20/README.md
+#### compiled with g++ 11.2.0 (source link https://github.com/gcc-mirror/gcc/releases/tag/releases%2Fgcc-11.2.0)
+#### Installation steps should be almost similar to 
+     https://github.com/ddeka0/cppLearn/blob/master/cpp20/README.md
